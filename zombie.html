@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>zombie</title>
+    <script src="./node_modules/web3/dist/web3.min.js"></script>
+</head>
+<body>
+<input id="nameInput" type="text">
+<button id="ourButton" type="button">创建僵尸</button>
+<p id="textarea"></p>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script>
+if (typeof web3 !== 'undefined') {
+    web3 = new Web3(web3.currentProvider);
+	} else {
+    web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+    }
+    web3.eth.defaultAccount = web3.eth.accounts[0];
+	   
+var ZombieFactoryContract = web3.eth.contract(
+[
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "showZombie",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_name",
+				"type": "string"
+			}
+		],
+		"name": "createRandomZombie",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+]
+	);
+var contractAddress = "0xac874d62acbe7bcd1973007e53bd4184d752006d";/* 发布之后在以太坊上生成的合约地址 */
+var ZombieFactory = ZombieFactoryContract.at(contractAddress);
+
+$("#ourButton").click(function(e){
+  var name = $("#nameInput").val();
+  ZombieFactory.createRandomZombie(name);
+})
+
+ZombieFactory.showZombie(function(error, result) {
+  if (!error) {
+	$("#textarea").html("姓名："+ result[1]+  "DNA:" + result[0])}
+  else console.log(error);
+})
+
+</script>
+</body>
+</html>
